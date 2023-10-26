@@ -30,4 +30,6 @@ Route::get('/branch', 'App\Http\Controllers\BranchController@view')->name('branc
 Route::get('/branch/create', 'App\Http\Controllers\BranchController@create')->name('branch.form');
 Route::get('/branch/delete/{id}', 'App\Http\Controllers\BranchController@delete')->name('branch.delete');
 Route::get('/branch/view/{id}', 'App\Http\Controllers\BranchController@viewBranchDetail')->name('branch.view');
+Route::get('/branch/edit/{id}', 'App\Http\Controllers\BranchController@edit')->name('branch.edit');
 Route::post('/branch-store', 'App\Http\Controllers\BranchController@store')->name('branch.store');
+Route::post('/branch-update', 'App\Http\Controllers\BranchController@update')->name('branch.update');

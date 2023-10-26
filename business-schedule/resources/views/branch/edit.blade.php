@@ -17,10 +17,7 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
-
         <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
-
-
 
     </head>
 
@@ -34,12 +31,13 @@
             <div class="">
                 <h1>Branch: Create</h1>
             </div>
-            <form method="post" action="{{ route('branch.store') }}" name="branchForm" enctype="multipart/form-data">
+            <form method="post" action="{{ route('branch.update') }}" name="branchForm" enctype="multipart/form-data">
                 <!-- CROSS Site Request Forgery Protection -->
                 @csrf
+                <input type="hidden" name="branchId" id="branchId" value="{{ $branch->id }}" />
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control" name="name" id="name"  >
+                    <input type="text" class="form-control" name="name" id="name" value="{{ $branch->name }}" / >
                     @error('name')
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
@@ -50,7 +48,7 @@
                     @if (count($business))
                         <select name="business" id="business" class="form-control">
                              @foreach ($business as $key => $value)
-                                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                <option value="{{ $value->id }}" @if($value->id == $branch->business_id) selected="selected" @endif>{{ $value->name }}</option>
                             @endforeach
                         </select>
                     @endif
@@ -63,29 +61,32 @@
 
                 <div class="form-group">
                     <label>Start Date - End Date</label>
-                    {{-- <input type="date" class="form-control" name="startDate[]" id="startDate"> --}}
-                    <input type="text" class="form-control" name="datefilter" id="datefilter" value="" />
-                    <input type="hidden" class="date start" name="startDate" id="startDate" />
-                    <input type="hidden" class="date start" name="endDate" id="endDate" />
+                    @php
+                        $branchTime = $branch->branchtime ? $branch->branchtime : [];
+                        //echo "<pre>";print_r( $branchTime);exit;
+
+                        $startDate = date('m/d/y',strtotime($branchTime[0]->startDate));
+                        $endDate = date('m/d/y',strtotime($branchTime[0]->endDate));
+                    @endphp
+                    <input type="text" class="form-control" name="datefilter" id="datefilter" value="{{ $startDate }} - {{$endDate}}" />
+                    <input type="hidden" class="date start" name="startDate" id="startDate" value="{{ $branchTime[0]->startDate }}" />
+                    <input type="hidden" class="date start" name="endDate" id="endDate" value="{{ $branchTime[0]->endDate }}" />
 
                     @error('datefilter')
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
                 </div>
 
-                <ul class="form-group" id="calenderDateRange">
-
-                </ul>
-
 
                 <p id="datepairExample" class="form-group">
                     <label>Start Time - End Time</label>
-                    <input type="text" class="timepicker" name="startTime" id="startTime" /> to
-                    <input type="text" class="timepicker" name="endTime" id="endTime" />
+
+                    <input type="text" class="timepicker" name="startTime" id="startTime" value="{{ $branchTime[0]->startTime }}" /> to
+                    <input type="text" class="timepicker" name="endTime" id="endTime" value="{{ $branchTime[0]->endTime }}"/>
+
                 </p>
 
                 OR
-
                 <div class="form-group">
                     <input type="checkbox" name="closed" id="closed" value="closed" /> Closed
                 </div>
@@ -94,50 +95,49 @@
                     <label>Images</label>
                     <input type="file" class="form-control" name="bimage[]" id="bimage" multiple="multiple">
                 </div>
+
+                <div class="form-group">
+                    @php
+                        $branchImage = $branch->branchtime ? $branch->branchimage : [];
+                        $imgArray = [];
+                    @endphp
+                        @if (count($branchImage))
+                            @foreach ($branchImage as $key => $value)
+                            <li class="list-group-item">Image : <img
+                                    src="{{ URL::to('/') }}/public/uploads/{{ $value->image }}"
+                                    style="height: 10%;width:10%; !important" /></th>
+                            </li>
+                            @php
+                                $imgArray[]=$value->image ;
+                            @endphp
+                            @endforeach
+
+                            
+                        @endif
+                        <input type="hidden" name="oldImg[]" id="oldImg" value={{ implode(",",$imgArray) }}  />
+
+                </div>
                 <input type="submit" name="send" value="Submit" class="btn btn-dark btn-block">
             </form>
         </div>
         <script type="text/javascript">
+            
 
             $(function() {
 
                 $('input[name="datefilter"]').daterangepicker({
                     autoUpdateInput: false,
-                    minDate:new Date(),
                     locale: {
                         cancelLabel: 'Clear'
                     }
                 });
 
-
-                let startDateArray = [];
-               let endDateArray = [];
                 $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
 
-                   // $("#startDate").val(picker.startDate.format('YYYY-MM-DD'));
-                   // $("#endDate").val(picker.endDate.format('YYYY-MM-DD'));
-
-                    startDateArray.push(picker.startDate.format('YYYY-MM-DD'));
-                    endDateArray.push(picker.endDate.format('YYYY-MM-DD'));
-
-                    var calenderHtml =  $("#calenderDateRange").text();
-                    var div = document.getElementById('calenderDateRange');
-
-                    console.log("startDateArray",startDateArray);
-                    console.log("endDateArray",endDateArray);
-
-                    $("#startDate").val(startDateArray.join());
-                    $("#endDate").val(endDateArray.join());
-
-                    div.innerHTML +="<li >Date Range - : " +  picker.startDate.format('YYYY-MM-DD') + "</label><label>  -  "+picker.endDate.format(
-                        'YYYY-MM-DD')+" </li>";
-
-                   // container.addEventListener('click', handleItemClick);
-
+                    $("#startDate").val(picker.startDate.format('YYYY-MM-DD'));
+                    $("#endDate").val(picker.endDate.format('YYYY-MM-DD'));
                     $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format(
                         'YYYY-MM-DD'));
-
-                        
                 });
 
                 $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
@@ -171,10 +171,6 @@
                     dropdown: true,
                     scrollbar: true
                 });
-
-                function removefn(obj){
-                    $(obj).remove();
-                }
             });
         </script>
 

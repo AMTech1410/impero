@@ -28,18 +28,30 @@
             <div class="form-group">
                 <label>Name</label>
                 <input type="text" class="form-control" name="name" id="name">
+                @error('name')
+                <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
             </div>
             <div class="form-group">
                 <label>Email</label>
                 <input type="email" class="form-control" name="email" id="email">
+                @error('email')
+                <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
             </div>
             <div class="form-group">
                 <label>Phone</label>
                 <input type="text" class="form-control" name="phone" id="phone">
+                @error('phone')
+                <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
             </div>
             <div class="form-group">
                 <label>Logo</label>
                 <input type="file" class="form-control" name="logo" id="logo">
+                @error('logo')
+                <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
             </div>
             <input type="submit" name="send" value="Submit" class="btn btn-dark btn-block">
         </form>

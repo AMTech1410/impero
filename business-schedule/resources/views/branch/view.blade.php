@@ -75,6 +75,7 @@
 
                                 <th>
                                     <a href="{{ route('branch.view', [$value->id]) }}">View</a> |
+                                    <a href="{{ route('branch.edit', [$value->id]) }}">Edit</a> |
                                     <a href="{{ route('branch.delete', [$value->id]) }}">Delete</a>
                                 </th>
 

@@ -14,10 +14,12 @@ class BranchTime extends Model
 
     protected $fillable = [
        
-        'weekdays',
         'startDate',
         'endDate',
-        'branch_id'
+        'branch_id',
+        'startTime',
+        'endTime',
+        'closed'
 
     ];
 

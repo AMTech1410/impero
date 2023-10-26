@@ -59,15 +59,38 @@
 
                 $branchTime = $branch->branchtime ? $branch->branchtime : [];
                 $branchImage = $branch->branchtime ? $branch->branchimage : [];
+
+                // echo "<pre>";print_r($branchTime);
+
             @endphp
 
             <ul class="list-group">
 
                 @if (count($branchTime))
                     @foreach ($branchTime as $key => $value)
-                        <li class="list-group-item">WeekDay : {{ $value->weekdays }}</li>
-                        <li class="list-group-item">StartDate : {{ $value->startDate }}</li>
-                        <li class="list-group-item">EndDate : {{ $value->endDate }}</li>
+                        @php
+                            $begin = new DateTime($value->startDate);
+                            $end = new DateTime($value->endDate);
+
+                            $interval = DateInterval::createFromDateString('1 day');
+                            $period = new DatePeriod($begin, $interval, $end);
+
+                        @endphp
+                        @foreach ($period as $dt)
+                            <li class="list-group-item">
+                                @php
+                                echo "<label><h5>"; echo $dt->format("l Y-m-d\n");  echo "</h5></label>";
+                                @endphp
+                                @if(isset($value->closed))
+                                 @php echo "Closed";  @endphp
+                                @else 
+                                    @php echo $value->startTime;
+                                echo ' - ';
+                                echo $value->endTime;  @endphp
+                                @endif
+                               
+                           </li>
+                        @endforeach
                     @endforeach
                 @endif
 

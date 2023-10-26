@@ -29,12 +29,23 @@ class BranchController extends Controller
         return view('branch.branchDetail', compact('branch'));
     }
 
+    public function edit($id){
+        $branch = Branch::with('business', 'branchtime', 'branchimage')->find($id);
+        $business = Business::all();
+        return view('branch.edit', compact('branch','business'));
+
+
+    }
+
 
     public function store(Request $request)
     {
 
+       // echo "<pre>";print_r($request->all());exit;
         request()->validate([
             'name' => 'required',
+            'business'=>'required',
+            'datefilter'=>'required'
         ]);
 
         $branchId = Branch::create([
@@ -62,23 +73,29 @@ class BranchController extends Controller
             }
         }
 
-        $startDate = $request->startDate;
-        $endDate = $request->endDate;
+        $startDate = explode(",",$request->startDate);
+        $endDate = explode(",",$request->endDate);
 
-        if (count($request->startDate)) {
-            foreach ($request->startDate as $key => $value) {
+        if (count($startDate)) {
+            foreach ($startDate as $key => $value) {
                 BranchTime::create([
                     'startDate' => $value,
-                    'endDate' => $request->endDate[$key],
-                    'weekdays' => $request->weekday,
+                    'endDate' => $endDate[$key],
                     'branch_id' => $branchId,
-
+                    'startTime'=>isset($request->closed) ? null : $request->startTime,
+                    'endTime'=>isset($request->closed) ? null : $request->endTime,
+                    'closed'=>isset($request->closed) ? 1 : 0
                 ]);
 
-            }
+           }
         }
 
         return redirect()->route('branch');
+    }
+
+    public function update(){
+        return redirect()->route('branch');
+
     }
 
     public function delete($id)
