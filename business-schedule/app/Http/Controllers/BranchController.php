@@ -78,12 +78,15 @@ class BranchController extends Controller
 
         if (count($startDate)) {
             foreach ($startDate as $key => $value) {
+
+                $startTime = explode(" ",$value);
+                $endTime = explode(" ",$endDate[$key]);
                 BranchTime::create([
-                    'startDate' => $value,
-                    'endDate' => $endDate[$key],
+                    'startDate' =>$startTime[0],
+                    'endDate' => $endTime[0],
                     'branch_id' => $branchId,
-                    'startTime'=>isset($request->closed) ? null : $request->startTime,
-                    'endTime'=>isset($request->closed) ? null : $request->endTime,
+                    'startTime'=>isset($request->closed) ? null : $startTime[1]." ".$startTime[2],
+                    'endTime'=>isset($request->closed) ? null : $endTime[1]." ".$endTime[2],
                     'closed'=>isset($request->closed) ? 1 : 0
                 ]);
 

@@ -39,26 +39,26 @@
                 @csrf
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control" name="name" id="name"  >
+                    <input type="text" class="form-control" name="name" id="name">
                     @error('name')
-                    <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
+                        <div class="alert alert-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="form-group">
                     <label>Business</label>
                     @if (count($business))
                         <select name="business" id="business" class="form-control">
-                             @foreach ($business as $key => $value)
+                            @foreach ($business as $key => $value)
                                 <option value="{{ $value->id }}">{{ $value->name }}</option>
                             @endforeach
                         </select>
                     @endif
                     @error('business')
-                    <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
+                        <div class="alert alert-danger">{{ $message }}</div>
+                    @enderror
 
-                   
+
                 </div>
 
                 <div class="form-group">
@@ -69,20 +69,14 @@
                     <input type="hidden" class="date start" name="endDate" id="endDate" />
 
                     @error('datefilter')
-                    <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
+                        <div class="alert alert-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <ul class="form-group" id="calenderDateRange">
 
                 </ul>
 
-
-                <p id="datepairExample" class="form-group">
-                    <label>Start Time - End Time</label>
-                    <input type="text" class="timepicker" name="startTime" id="startTime" /> to
-                    <input type="text" class="timepicker" name="endTime" id="endTime" />
-                </p>
 
                 OR
 
@@ -98,47 +92,75 @@
             </form>
         </div>
         <script type="text/javascript">
-
             $(function() {
 
+                // $('input[name="datefilter"]').daterangepicker({
+                //     autoUpdateInput: false,
+                //     minDate:new Date(),
+                //     locale: {
+                //         cancelLabel: 'Clear'
+                //     }
+                // });
+
+
+                let startDateArray = [];
+                let endDateArray = [];
+                /* $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+
+                     startDateArray.push(picker.startDate.format('YYYY-MM-DD'));
+                     endDateArray.push(picker.endDate.format('YYYY-MM-DD'));
+
+                     var calenderHtml =  $("#calenderDateRange").text();
+                     var div = document.getElementById('calenderDateRange');
+
+
+                     $("#startDate").val(startDateArray.join());
+                     $("#endDate").val(endDateArray.join());
+
+                     div.innerHTML +="<li>Date Range - : " +  picker.startDate.format('YYYY-MM-DD') + "</label><label>  -  "+picker.endDate.format(
+                         'YYYY-MM-DD')+"</label> <input type='button' value='Remove' onClick='$(this).parent().remove()' /></li>";
+
+                     $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format(
+                         'YYYY-MM-DD'));
+                         
+                 });*/
+
+
                 $('input[name="datefilter"]').daterangepicker({
-                    autoUpdateInput: false,
-                    minDate:new Date(),
+                    timePicker: true,
+                    minDate: new Date(),
+                    startDate: moment().startOf('hour'),
+                    endDate: moment().startOf('hour').add(32, 'hour'),
                     locale: {
-                        cancelLabel: 'Clear'
+                        format: 'M/DD/Y hh:mm A'
                     }
                 });
 
 
-                let startDateArray = [];
-               let endDateArray = [];
                 $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
 
-                   // $("#startDate").val(picker.startDate.format('YYYY-MM-DD'));
-                   // $("#endDate").val(picker.endDate.format('YYYY-MM-DD'));
+                    startDateArray.push(picker.startDate.format('YYYY-MM-DD hh:mm A'));
+                    endDateArray.push(picker.endDate.format('YYYY-MM-DD hh:mm A'));
 
-                    startDateArray.push(picker.startDate.format('YYYY-MM-DD'));
-                    endDateArray.push(picker.endDate.format('YYYY-MM-DD'));
-
-                    var calenderHtml =  $("#calenderDateRange").text();
+                    var calenderHtml = $("#calenderDateRange").text();
                     var div = document.getElementById('calenderDateRange');
 
-                    console.log("startDateArray",startDateArray);
-                    console.log("endDateArray",endDateArray);
 
                     $("#startDate").val(startDateArray.join());
                     $("#endDate").val(endDateArray.join());
 
-                    div.innerHTML +="<li >Date Range - : " +  picker.startDate.format('YYYY-MM-DD') + "</label><label>  -  "+picker.endDate.format(
-                        'YYYY-MM-DD')+" </li>";
+                    div.innerHTML += "<li>Date Range - : " + picker.startDate.format('YYYY-MM-DD hh:mm A') +
+                        "</label><label>  -  " + picker.endDate.format(
+                            'YYYY-MM-DD hh:mm A') +
+                        "</label> <input type='button' value='Remove' onClick='$(this).parent().remove()' /></li>";
 
-                   // container.addEventListener('click', handleItemClick);
+                    $(this).val(picker.startDate.format('YYYY-MM-DD hh:mm A') + ' - ' + picker.endDate.format(
+                        'YYYY-MM-DD hh:mm A'));
 
-                    $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format(
-                        'YYYY-MM-DD'));
-
-                        
                 });
+
+
+
 
                 $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
                     $(this).val('');
@@ -148,38 +170,14 @@
                 });
 
 
-                $('#startTime').timepicker({
-                    timeFormat: 'h:mm p',
-                    interval: 60,
-                    minTime: '10',
-                    maxTime: '6:00pm',
-                    defaultTime: '11',
-                    startTime: '10:00',
-                    dynamic: false,
-                    dropdown: true,
-                    scrollbar: true
-                });
-
-                $('#endTime').timepicker({
-                    timeFormat: 'h:mm p',
-                    interval: 60,
-                    minTime: '10',
-                    maxTime: '6:00pm',
-                    defaultTime: '11',
-                    startTime: '10:00',
-                    dynamic: false,
-                    dropdown: true,
-                    scrollbar: true
-                });
-
-                function removefn(obj){
+                function removefn(obj) {
                     $(obj).remove();
                 }
             });
         </script>
 
-     
-	
+
+
     </body>
 
     </html>

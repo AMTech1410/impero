@@ -81,7 +81,7 @@
                                 @php
                                 echo "<label><h5>"; echo $dt->format("l Y-m-d\n");  echo "</h5></label>";
                                 @endphp
-                                @if(isset($value->closed))
+                                @if($value->closed))
                                  @php echo "Closed";  @endphp
                                 @else 
                                     @php echo $value->startTime;
